@@ -51,13 +51,11 @@ const getOrders = async(req, res)=>{
     }
 }
 
-const getOrderbyid = async (req, res) => {
+const getMyOrders = async (req, res) => {
     try {
         const orders = await Order.find({
             user: req.user._id
-        }).populate('items.productId', 'name price');
-        console.log("Logged in user:", req.user._id);
-        console.log("Orders:", orders);
+        }).populate('items.product_id', 'name price imageUrl');
 
         if (orders.length === 0) {
             return res.status(404).json({
@@ -96,4 +94,4 @@ const updateOrderStatus = async(req, res)=>{
     }
 }
 
-module.exports = {createOrder, getOrders, getOrderbyid, updateOrderStatus};
+module.exports = {createOrder, getOrders, getMyOrders, updateOrderStatus};

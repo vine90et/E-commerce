@@ -36,15 +36,30 @@ const createProduct = async(req, res)=>{
     }
 }
 
-const getProduct = async(req, res)=>{
-    try {
-        const product = await Product.find({});
-        res.status(200).json({Product: product});   
-    } catch (error) {
-        console.log("❌ error in get Product controller", error)
-        res.status(500).json({message:"Internal server error"});   
-    }
-}
+const getProduct = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 4;
+
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find({})
+      .skip(skip)
+      .limit(limit);
+
+    const totalProducts = await Product.countDocuments();
+
+    res.status(200).json({
+      products,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit),
+      totalProducts,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 const getProductbyId = async(req, res)=>{
     try {
