@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Loader from "../components/Loader";
 import ButtonLoader from "../components/ButtonLoader";
-import { AuthContext, AuthProvider } from "../context/AuthContext"
+import { AuthContext } from "../context/AuthContext"
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -44,25 +44,19 @@ const Login = () => {
     if (!validate()) return;
     setLoading(true);
         try {
-            console.time("Register API");
             const res = await fetch("/api/auth/login",{
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(formData)
             });
 
-            console.timeLog("Register API", "Response received");
-
             const data = await res.json();
-
-            console.timeEnd("Register API");
             if(res.ok){
-                navigate('/');
-                {/*---------------- use toast here -------------------- */}
-                alert(data.message || "logged in successfully");
                 login(data);
+                toast.success(data.message);
+                navigate('/');
             }else{
-                alert(data.message)
+                toast.error(data.message);
             }
         } catch (error) {
             console.log(error)
@@ -151,12 +145,15 @@ const Login = () => {
             }
             <p className=" border-t-2 border-gray-600"> </p>
             
-            <p className="text-center -mt-5">
-                Don't have an account??
-                <Link to="/register" className="text-gray-500">
-                    Create New
-                </Link>
-            </p>
+            <p className="text-center text-gray-600">
+              Don't have an account?{" "}
+              <Link
+                  to="/register"
+                  className="font-semibold text-indigo-600 hover:underline"
+              >
+                  Create one
+              </Link>
+          </p>
             
 
         </form>
