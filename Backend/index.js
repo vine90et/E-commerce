@@ -1,6 +1,6 @@
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const dotenv = require("dotenv");
 const connectDb = require("./config/db.js");
 const authRoute = require("./routes/authRoute.js")
