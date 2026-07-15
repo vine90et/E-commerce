@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const dotenv = require("dotenv");
 const connectDb = require("./config/db.js");
 const authRoute = require("./routes/authRoute.js")
@@ -16,9 +17,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 app.use(cors({
-    origin: ['http://localhost:5173', process.env.FRONTEND_URL],
-    methods: ['Get', 'Post', 'Put', 'Delete'],
-    allowedHeaders: ['content-type', 'Authorization']
+  origin: true,
+  credentials: true,
 }));
 
 const PORT = process.env.PORT || 3000;
@@ -29,24 +29,13 @@ app.use("/api/order", orderRoute);
 app.use("/api/payment", paymentRoute);
 app.use("/api/analytics", analyticsRoute);
 
-app.get("/", (req,res)=>{
-    console.log("app is running");
-     res.send("App is running");
-})
-
 // Serve frontend in production
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+    app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  app.get("*", (req, res) => {
-    res.sendFile(
-      path.resolve(__dirname, "../frontend/dist/index.html")
-    );
-  });
-} else {
-  app.get("/", (req, res) => {
-    res.send("ShopNest API is running in Development mode...");
-  });
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+    });
 }
 
 
